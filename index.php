@@ -1,18 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>Web Trgovina</title>
-    <link rel="stylesheet" href="css/stil.css">
-</head>
-<body>
-
-<nav>
-    <a href="index.php">Početna</a>
-    <a href="kategorije.php">Kategorije</a>
-    <a href="proizvodi.php">Proizvodi</a>
-</nav>
-<hr>
+<?php
+require_once "header.php";
+?>
 <div id="content">
     Ovdje će ići sadržaj
 
@@ -20,9 +8,6 @@
 
 <h3>Web Trgovina</h3>
 </div>
-<div id="footer">
-<hr>
-<p>&copy; WebTrgovina i kompanija</p>
-</div>
-</body>
-</html>
+<?php
+require_once "footer.php";
+?>
