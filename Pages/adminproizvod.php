@@ -12,7 +12,7 @@ require_once "../Models/Kategorija.php";
 
 if(isset($_GET["id"])){
     $idpr=$_GET["id"];
-    //$kategorija = Kategorija::getById($idkat);
+    $produkt = Produkt::getById($idpr);
 }
 else
 {
@@ -33,7 +33,9 @@ $kategorije = Kategorija::allCategories();
     <label>Kategorija</label>
     <select name="kategorijaid">
         <?php foreach($kategorije as $k): ?>
-            <option value="<?= $k['id'] ?>"><?= $k['naziv'] ?></option>
+            <option value="<?= $k['id'] ?>" 
+            <?php if(isset($produkt) && $produkt["kategorijaid"]==$k["id"]) echo " selected"; ?>
+            ><?= $k['naziv'] ?></option>
         <?php endforeach; ?>
     </select>
     <button type="submit">Spremi</button>
@@ -48,8 +50,8 @@ if($_POST){
     else
     {
         //za update
-        Kategorija::update($_POST["id"],$_POST["naziv"]);
-        echo "<p style='color:green;'>Kategorija ažurirana</p>";
+        Produkt::update($_POST["id"],$_POST["naziv"],$_POST["kolicina"],$_POST["cijena"],$_POST["kategorijaid"]);
+        echo "<p style='color:green;'>Proizvod ažuriran</p>";
     }
     
     header("refresh: 1; url=proizvodi.php");

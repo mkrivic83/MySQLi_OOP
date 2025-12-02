@@ -4,6 +4,17 @@ require_once "Redirect.php";
 
 class Produkt{
 
+    private static function validateProdukt(int $cijena, float $kolicina){
+
+        if($kolicina < 10){
+            $msg="Količina je manja od 10";
+        }
+        if($cijena < 5){
+            $msg.="<br>Cijena je manja od 5";
+        }
+        Redirect::redirectToErrorPage($msg);
+    }
+
     public static function allProducts(): array{
         $db = DB::getInstance()->conn;
         $sql = "SELECT p.*, k.naziv as kategorija
@@ -15,6 +26,7 @@ class Produkt{
     }
 
     public static function insert($naziv,$kolicina,$cijena,$kategorijaid){
+        self::validateProdukt($cijena,$kolicina);
         $db = DB::getInstance()->conn;
 
         try{
@@ -28,6 +40,50 @@ class Produkt{
             exit;
         }
     }
+
+    public static function getById($id){
+        $db = DB::getInstance()->conn;
+
+        $stmt = $db->prepare("SELECT * from produkti WHERE id = ?");
+        $stmt->bind_param("i",$id);
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+        return $result->fetch_assoc();      
+    }
+
+    public static function update($id,$naziv,$kolicina,$cijena,$kategorijaid){
+        $db = DB::getInstance()->conn;
+        try{
+        $stmt = $db->prepare("UPDATE produkti set naziv = ?, kolicina=?, cijena=?, kategorijaid=? where id = ?");
+        $stmt->bind_param("sidii",$naziv,$kolicina,$cijena,$kategorijaid,$id);
+        $_SESSION["poruka"]="Proizvod naziva {$naziv} uspješno ažuriran!";
+        return $stmt->execute();       
+        }
+        catch(mysqli_sql_exception $e){
+            $msg="Greška kod ažuriranja: ".$e->getMessage();
+            Redirect::redirectToErrorPage($msg);
+            exit;
+        }
+
+    }
+
+    public static function delete($id){
+        $db = DB::getInstance()->conn;
+        try{
+            $stmt = $db->prepare("DELETE FROM produkti WHERE id = ?");
+            $stmt->bind_param("i",$id);
+            $_SESSION["poruka"]="Proizvod uspješno izbrisan!";
+            return $stmt->execute();    
+        }
+        catch(mysqli_sql_exception $e){
+            $msg="Greška kod brisanja: ".$e->getMessage();
+            Redirect::redirectToErrorPage($msg);
+            exit;
+        }
+
+    }
+
     
 }
 
